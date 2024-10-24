@@ -1,0 +1,37 @@
+version: '3.3'
+services:
+  db-mysql-winit:
+    container_name: db-mysql-winit
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'winit_db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3307:3306'
+    volumes:
+      - db-mysql-winit:/var/lib/mysql
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql-winit:3306/winit_db?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - APPLICATION_SECURITY_JWT_SECRETKEY=2Cm8Q75UUmW73F6Uys+NFPIw4krPKOc/lluoPfLsD9xQ1+/0GonKTFXFxbDBzgk53MTFDLG01UTrNy6Z6kpNns2RTqrOkLm4wv01ph5gwMDH69umhoUhpuFSe6NDkgTJEdLndH2YXN8wdGzvJqI2XXCeun+pzZWn+PiNQUxYpayXkXYwGDHsFZeE5RHfa2jpR68cQHAmZczjH6E3IeLdjGMhQbc9t+RScVxDlYYw5MpQv46E7tdnHlKjDi0BX4o4Su55eGKX3vrkA5IeWnGiMoZ8vs3A8t/8/2Zk9lkJ3TBzpVKKiU7n4fNF+KMIThZ3JAnFH5y9gT1V6jDz6Snx20YsDWaOLlUeYFrNWu0HeOY=
+      - MAILJET_APIKEY=570b765f08b67dfefea61907fc6aa5a9
+      - MAILJET_APISECRET=bde17cd1113f1696644529d9aa4c263b
+    depends_on:
+      - db-mysql-winit
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2
+
+volumes:
+  db-mysql-winit:
